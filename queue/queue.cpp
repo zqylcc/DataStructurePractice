@@ -1,16 +1,16 @@
 #include "queue.h"
-#define ARR_LEN 4
 #define RE_SIZE_MULTIPLE 2
 
-Queue::Queue(): queueSize(0), arrSize(ARR_LEN), popPos(0), pushPos(0)
+Queue::Queue(int size): queueSize(0), arrSize(size), popPos(0), pushPos(0)
 {
     arr = new int[arrSize];
+    //To do
+    //handle exception
 }
 
 Queue::~Queue()
 {
-    if(arr)
-    {
+    if (arr) {
         delete []arr;
         arr = NULL;
     }
@@ -18,76 +18,88 @@ Queue::~Queue()
 
 int Queue::getQueueSize() const
 {
-    cout << "QueueSize:" << queueSize << endl;
+    cout << "queueSize:" << queueSize << endl;
     return queueSize;
 }
 
 int Queue:: getArrSize() const
 {
-    cout << "ArrSize:" << arrSize << endl;
+    cout << "arrSize:" << arrSize << endl;
     return arrSize;
 }
 
 bool Queue::push(int value)
 {
-    // no space in array
-    if(popPos == pushPos){
-        if(queueSize == arrSize){
-            resize();
-            cout << "resize" << endl;
+    // no more space in array, need to resize
+    if ( popPos == pushPos && queueSize == arrSize ) {
+        if ( resize() == false) {
+            cout << "resize fail" << endl;
+            return false;
         }
     }
+
     arr[pushPos] = value;
-    queueSize++;
-    // at the end of array
-    if(pushPos == arrSize-1){
+    cout << "push value:" << "a[" << pushPos << "] = " << arr[pushPos];
+    // at end of array, need to loop to the head
+    if ( pushPos == arrSize-1 ) {
         pushPos = 0;
     }
-    else{
+    else {
         pushPos++;
     }
-    cout << "push value:" << value << " pushPos:" << pushPos <<endl;
+    queueSize++;
+    cout << " pushPos: " << pushPos << " queueSize: " << queueSize << endl;
     return true;
 }
 
-int  Queue::pop()
+bool Queue::pop(int &value)
 {
-    // queue empty
-    if(queueSize == 0){
-        cout << "popPos == pushPos" << endl;
-        return -1;
+    if ( queueSize == 0 ) {
+        cout << "queue empty, pop fail" << endl;
+        return false;
     }
-    // at the end of array
-    if(popPos == arrSize-1){
+    // at end of array, need to loop to the head
+    value = arr[popPos];
+    cout << "pop value: " << "a[" << popPos << "] = " << value;
+    if ( popPos == arrSize-1 ) {
         popPos = 0;
-        return arr[arrSize-1];
     }
-    
-    popPos++;
+    else {
+        popPos++;
+    } 
     queueSize--;
-    cout << "popPos:" << popPos << endl;
-    return arr[popPos-1];
+    cout << " popPos: " << popPos << " queueSize: " << queueSize << endl;
+    return true;
 }
 
 // resize array if no space when pushing the element
-void Queue::resize()
+bool Queue::resize()
 {
+    cout << "resize begin" << endl;
     int *arr_resize = new int[arrSize*RE_SIZE_MULTIPLE];
-    if(popPos == 0){
-        memcpy(arr_resize, arr, arrSize*sizeof(int));
+    if ( arr == NULL ) {
+        cout << "resize fail"<< endl;
+        return false;
     }
-    // queue loops to front positions of the array
-    else{
+    if ( popPos == 0 ) {
+        memcpy(arr_resize, &arr[popPos], arrSize*sizeof(int));
+        cout << "copy in order" << endl;
+    }
+    // for case that pushPos loops ahead of popPos
+    else {
         memcpy(arr_resize, &arr[popPos], (arrSize-popPos)*sizeof(int));
         memcpy(&arr_resize[arrSize-popPos], arr, popPos*sizeof(int));
+        cout << "copy twice" << endl;
     }
+
     popPos = 0;
-    pushPos = arrSize;
+    pushPos = queueSize;
     
-    if(arr){
+    if (arr) {
         delete []arr;
         arr = NULL;
     }
     arr = arr_resize;
     arrSize *=RE_SIZE_MULTIPLE;
+    return true;
 }

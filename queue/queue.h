@@ -14,14 +14,14 @@ using namespace std;
 class Queue
 {
     public:
-        Queue();
+        Queue(int size = 4);
         ~Queue();
         int getQueueSize() const;
         int getArrSize() const;
         bool push(int value);
-        int pop();
+        bool pop(int &value);
     private:
-        void resize();
+        bool resize();
     private:
         int *arr;
         int queueSize;
