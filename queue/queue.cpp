@@ -1,11 +1,31 @@
 #include "queue.h"
 #define RE_SIZE_MULTIPLE 2
 
-Queue::Queue(int size): queueSize(0), arrSize(size), popPos(0), pushPos(0)
+Queue::Queue(int size, int value): queueSize(0), arrSize(size), popPos(0), pushPos(0)
 {
     arr = new int[arrSize];
-    //To do
-    //handle exception
+    // TODO: handle exception
+    memset(arr, value, arrSize);
+}
+
+Queue::Queue(int array[], int size): queueSize(0), arrSize(size), popPos(0), pushPos(0)
+{
+    arr = new int[arrSize];
+    // TODO: handle exception
+    memcpy(arr, array, arrSize);
+}
+
+Queue::Queue(const Queue& queue)
+{
+    queueSize = queue.queueSize;
+    arrSize = queue.arrSize;
+    arr = new int[arrSize];
+    //memcpy(arr, queue.arr, arrSize);
+    for (int i=0; i<arrSize; i++) {
+        arr[i] = queue.arr[i];
+    }
+    popPos = queue.popPos;
+    pushPos = queue.pushPos;
 }
 
 Queue::~Queue()
@@ -30,6 +50,7 @@ int Queue:: getArrSize() const
 
 bool Queue::push(int value)
 {
+    // TODO: thread safety
     // no more space in array, need to resize
     if ( popPos == pushPos && queueSize == arrSize ) {
         if ( resize() == false) {
@@ -54,6 +75,7 @@ bool Queue::push(int value)
 
 bool Queue::pop(int &value)
 {
+    // TODO: thread safety
     if ( queueSize == 0 ) {
         cout << "queue empty, pop fail" << endl;
         return false;
@@ -75,21 +97,19 @@ bool Queue::pop(int &value)
 // resize array if no space when pushing the element
 bool Queue::resize()
 {
-    cout << "resize begin" << endl;
+    cout << "begin to " << RE_SIZE_MULTIPLE << " multiple size the array" << endl;
     int *arr_resize = new int[arrSize*RE_SIZE_MULTIPLE];
     if ( arr == NULL ) {
         cout << "resize fail"<< endl;
         return false;
     }
     if ( popPos == 0 ) {
-        memcpy(arr_resize, &arr[popPos], arrSize*sizeof(int));
-        cout << "copy in order" << endl;
+        memcpy(arr_resize, arr+popPos, arrSize*sizeof(int));
     }
     // for case that pushPos loops ahead of popPos
     else {
-        memcpy(arr_resize, &arr[popPos], (arrSize-popPos)*sizeof(int));
-        memcpy(&arr_resize[arrSize-popPos], arr, popPos*sizeof(int));
-        cout << "copy twice" << endl;
+        memcpy(arr_resize, arr+popPos, (arrSize-popPos)*sizeof(int));
+        memcpy(arr_resize+(arrSize-popPos), arr, popPos*sizeof(int));
     }
 
     popPos = 0;

@@ -3,9 +3,8 @@
 #include "queue.h"
 using namespace std;
 
-void resize_1()
+void resize_1(Queue& q)
 {
-    Queue q = Queue(4);
     int value;
     q.pop(value);
     q.push(0);
@@ -20,9 +19,8 @@ void resize_1()
     
 }
 
-void resize_2()
+void resize_2(Queue& q)
 {
-    Queue q = Queue(4);
     int value;
     q.push(0);
     q.pop(value);
@@ -43,9 +41,11 @@ void resize_2()
 
 int main()
 {
+    Queue queue1(4, 0);
     cout << "resize_1" << endl;
-    resize_1();
+    resize_1(queue1);
     cout << "resize_2" << endl;
-    resize_2();
+    Queue queue2(queue1);
+    resize_2(queue2);
     return 0;
 }
