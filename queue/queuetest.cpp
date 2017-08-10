@@ -41,11 +41,17 @@ void resize_2(Queue& q)
 
 int main()
 {
-    Queue queue1(4, 0);
-    cout << "resize_1" << endl;
-    resize_1(queue1);
-    cout << "resize_2" << endl;
-    Queue queue2(queue1);
-    resize_2(queue2);
+    try {
+        Queue queue1 = Queue();
+        cout << "resize_1" << endl;
+        resize_1(queue1);
+        cout << "resize_2" << endl;
+        Queue queue2(queue1);
+        resize_2(queue2);
+    }
+    catch (const bad_alloc& e) {
+        cout << "new memory fail" << endl;
+        return -1;
+    }
     return 0;
 }

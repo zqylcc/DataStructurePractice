@@ -15,7 +15,7 @@ class Queue
 {
     public:
         Queue(int size = 4, int value = 0);
-        Queue(int array[], int size);
+        Queue(const int array[], int size);
         Queue(const Queue& queue);
         ~Queue();
         int getQueueSize() const;

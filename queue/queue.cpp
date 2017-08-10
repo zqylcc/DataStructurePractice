@@ -8,7 +8,7 @@ Queue::Queue(int size, int value): queueSize(0), arrSize(size), popPos(0), pushP
     memset(arr, value, arrSize);
 }
 
-Queue::Queue(int array[], int size): queueSize(0), arrSize(size), popPos(0), pushPos(0)
+Queue::Queue(const int array[], int size): queueSize(0), arrSize(size), popPos(0), pushPos(0)
 {
     arr = new int[arrSize];
     // TODO: handle exception
